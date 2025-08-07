@@ -43,11 +43,9 @@ spec:
       serviceAccountName: {{ include "n8n.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.main.podSecurityContext | nindent 8 }}
-      {{- if or .Values.main.initContainers }}
-      initContainers:
       {{- if .Values.main.initContainers }}
+      initContainers:
         {{ tpl (toYaml .Values.main.initContainers) . | nindent 10 }}
-      {{- end }}
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
@@ -64,20 +62,22 @@ spec:
             - configMapRef:
                 name: {{ include "n8n.fullname" . }}-app-config
             {{- end }}
-           {{- if .Values.main.secret }}
+            {{- if .Values.main.secret }}
             - secretRef:
                 name: {{ include "n8n.fullname" . }}-app-secret
             {{- end }}
-          env: {{ not (empty .Values.main.extraEnv) | ternary nil "[]" }}
+          {{- if .Values.main.extraEnv }}
+          env:
             {{- range $key, $value := .Values.main.extraEnv }}
             - name: {{ $key }}
               {{- toYaml $value | nindent 14 }}
             {{- end }}
+          {{- end }}
           lifecycle:
             {{- toYaml .Values.main.lifecycle | nindent 12 }}
           ports:
             - name: http
-              containerPort: {{ get (default (dict) .Values.main.config) "port" | default 5678 }}
+              containerPort: {{ get (default (dict) .Values.main.config.n8n) "port" | default 5678 }}
               protocol: TCP
           {{- with .Values.main.livenessProbe }}
           livenessProbe:

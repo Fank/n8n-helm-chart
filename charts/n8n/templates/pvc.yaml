@@ -13,9 +13,9 @@ metadata:
     {{- include "n8n.labels" . | nindent 4 }}
 spec:
   accessModes:
-    {{- range .Values.main.persistence.accessModes }}
+  {{- range .Values.main.persistence.accessModes }}
     - {{ . | quote }}
-    {{- end }}
+  {{- end }}
   resources:
     requests:
       storage: {{ .Values.main.persistence.size }}

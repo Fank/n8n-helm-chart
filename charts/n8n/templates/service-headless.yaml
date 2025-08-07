@@ -14,11 +14,11 @@ spec:
   type: ClusterIP
   clusterIP: None
   ports:
-    - port: {{ get (default (dict) .Values.main.config) "port" | default 5678 }}
+    - port: {{ get (default (dict) .Values.main.config.n8n) "port" | default 5678 }}
       targetPort: http
       protocol: TCP
       name: http
   selector:
-    {{- include "n8n.selectorLabels" . | nindent 4 }}
+{{ include "n8n.selectorLabels" . | nindent 4 }}
     app.kubernetes.io/type: master
 {{- end }}
